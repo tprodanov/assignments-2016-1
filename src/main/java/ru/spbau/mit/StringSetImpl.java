@@ -77,6 +77,8 @@ public class StringSetImpl implements StringSet {
             return false;
         }
         if (transitions[element.charAt(index) - 'A'].removeFromIndex(element, index + 1)) {
+            if (transitions[element.charAt(index) - 'A'].size() == 0)
+                transitions[element.charAt(index) - 'A'] = null;
             --size;
             return true;
         }

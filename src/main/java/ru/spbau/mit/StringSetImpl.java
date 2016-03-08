@@ -1,7 +1,5 @@
 package ru.spbau.mit;
 
-import java.util.Vector;
-
 public class StringSetImpl implements StringSet {
 
     private static final char SMALLEST_LETTER = 'A';
@@ -17,27 +15,26 @@ public class StringSetImpl implements StringSet {
 
     @Override
     public boolean add(String element) {
-        Vector<StringSetImpl> path = pathToWord(element, 0, true);
-        if (path.elementAt(0).endState) {
+        if (contains(element)) {
             return false;
-        } else {
-            path.elementAt(0).endState = true;
-            for (StringSetImpl node : path) {
-                ++node.size;
-            }
-            return true;
         }
+        addFromIndex(element, 0);
+        return true;
     }
 
     @Override
     public boolean contains(String element) {
-        Vector<StringSetImpl> path = pathToWord(element, 0, false);
-        return path != null && path.elementAt(0).endState;
+        StringSetImpl node = climbTo(element, 0);
+        return node != null && node.endState;
     }
 
     @Override
     public boolean remove(String element) {
-        return removeFromIndex(element, 0);
+        if (!contains(element)) {
+            return false;
+        }
+        removeFromIndex(element, 0);
+        return true;
     }
 
     @Override
@@ -47,11 +44,11 @@ public class StringSetImpl implements StringSet {
 
     @Override
     public int howManyStartsWithPrefix(String prefix) {
-        Vector<StringSetImpl> path = pathToWord(prefix, 0, false);
-        if (path == null) {
+        StringSetImpl node = climbTo(prefix, 0);
+        if (node == null) {
             return 0;
         } else {
-            return path.elementAt(0).size;
+            return node.size;
         }
     }
 
@@ -59,52 +56,43 @@ public class StringSetImpl implements StringSet {
         return letter - SMALLEST_LETTER;
     }
 
-    private Vector<StringSetImpl> pathToWord(String word, int index, boolean insertNodes) {
-        if (index == word.length()) {
-            Vector<StringSetImpl> path = new Vector<>();
-            path.add(this);
-            return path;
-        }
-
-        if (transitions[getIndex(word.charAt(index))] == null) {
-            if (insertNodes) {
-                transitions[getIndex(word.charAt(index))] = new StringSetImpl();
-            } else {
-                return null;
-            }
-        }
-
-        Vector<StringSetImpl> path = transitions[getIndex(word.charAt(index))]
-                .pathToWord(word, index + 1, insertNodes);
-        if (path != null) {
-            path.add(this);
-        }
-
-        return path;
+    private StringSetImpl nextNode(String word, int index) {
+        return transitions[getIndex(word.charAt(index))];
     }
 
-    private boolean removeFromIndex(String element, int index) {
-        if (index == element.length()) {
-            if (endState) {
-                endState = false;
-                --size;
-                return true;
-            } else {
-                return false;
-            }
+    private StringSetImpl climbTo(String word, int indexFrom) {
+        if (indexFrom == word.length()) {
+            return this;
+        }
+        if (nextNode(word, indexFrom) == null) {
+            return null;
         }
 
-        if (transitions[getIndex(element.charAt(index))] == null) {
-            return false;
+        return nextNode(word, indexFrom).climbTo(word, indexFrom + 1);
+    }
+
+    private void addFromIndex(String element, int index) {
+        ++size;
+        if (index == element.length()) {
+            endState = true;
+        } else {
+            if (nextNode(element, index) == null) {
+                transitions[getIndex(element.charAt(index))] = new StringSetImpl();
+            }
+            nextNode(element, index).addFromIndex(element, index + 1);
         }
-        if (transitions[getIndex(element.charAt(index))].removeFromIndex(element, index + 1)) {
-            if (transitions[getIndex(element.charAt(index))].size() == 0) {
+    }
+
+    private void removeFromIndex(String element, int index) {
+        --size;
+        if (index == element.length()) {
+            endState = false;
+        } else {
+            nextNode(element, index).removeFromIndex(element, index + 1);
+            if (nextNode(element, index).size == 0) {
                 transitions[getIndex(element.charAt(index))] = null;
             }
-            --size;
-            return true;
         }
-        return false;
     }
 
 }

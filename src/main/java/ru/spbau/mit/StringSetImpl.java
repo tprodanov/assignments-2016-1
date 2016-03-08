@@ -4,10 +4,10 @@ import java.util.Vector;
 
 public class StringSetImpl implements StringSet {
 
-    private static final char smallestLetter = 'A';
-    private static final char largestLetter = 'z';
+    private static final char SMALLEST_LETTER = 'A';
+    private static final char LARGEST_LETTER = 'z';
 
-    private StringSetImpl[] transitions = new StringSetImpl[largestLetter - smallestLetter + 1];
+    private StringSetImpl[] transitions = new StringSetImpl[LARGEST_LETTER - SMALLEST_LETTER + 1];
     private boolean endState = false;
     private int size = 0;
 
@@ -48,11 +48,15 @@ public class StringSetImpl implements StringSet {
     @Override
     public int howManyStartsWithPrefix(String prefix) {
         Vector<StringSetImpl> path = pathToWord(prefix, 0, false);
-        return path == null ? 0 : path.elementAt(0).size;
+        if (path == null) {
+            return 0;
+        } else {
+            return path.elementAt(0).size;
+        }
     }
 
     private static int getIndex(char letter) {
-        return letter - smallestLetter;
+        return letter - SMALLEST_LETTER;
     }
 
     private Vector<StringSetImpl> pathToWord(String word, int index, boolean insertNodes) {

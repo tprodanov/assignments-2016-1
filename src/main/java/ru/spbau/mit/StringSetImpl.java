@@ -119,11 +119,15 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         try {
             DataInputStream dataIn = new DataInputStream(in);
             endState = dataIn.readBoolean();
+            if (endState) {
+                ++size;
+            }
 
             for (int i = 0; i < transitions.length; ++i) {
                 if (dataIn.readBoolean()) {
                     transitions[i] = new StringSetImpl();
                     transitions[i].deserialize(dataIn);
+                    size += transitions[i].size;
                 }
             }
         } catch (IOException ioException) {

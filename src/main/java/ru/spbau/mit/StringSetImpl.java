@@ -102,7 +102,6 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         try {
             DataOutputStream dataOut = new DataOutputStream(out);
             dataOut.writeBoolean(endState);
-
             for (StringSetImpl child : transitions) {
                 dataOut.writeBoolean(child != null);
                 if (child != null) {

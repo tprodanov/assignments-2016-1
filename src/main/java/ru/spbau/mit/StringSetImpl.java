@@ -117,6 +117,8 @@ public class StringSetImpl implements StringSet, StreamSerializable {
     public void deserialize(InputStream in) {
         try {
             DataInputStream dataIn = new DataInputStream(in);
+            size = 0;
+
             endState = dataIn.readBoolean();
             if (endState) {
                 ++size;

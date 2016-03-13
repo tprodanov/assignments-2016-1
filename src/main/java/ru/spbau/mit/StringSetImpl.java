@@ -127,6 +127,8 @@ public class StringSetImpl implements StringSet, StreamSerializable {
                     transitions[i] = new StringSetImpl();
                     transitions[i].deserialize(dataIn);
                     size += transitions[i].size;
+                } else {
+                    transitions[i] = null;
                 }
             }
         } catch (IOException ioException) {

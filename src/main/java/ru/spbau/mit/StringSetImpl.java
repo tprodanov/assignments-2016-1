@@ -114,7 +114,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
             }
         }
     }
-    
+
     private void doSerialize(OutputStream out) throws IOException {
         DataOutputStream dataOut = new DataOutputStream(out);
         dataOut.writeBoolean(endState);

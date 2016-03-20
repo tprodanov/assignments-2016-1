@@ -54,6 +54,24 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         }
     }
 
+    @Override
+    public void serialize(OutputStream out) {
+        try {
+            doSerialize(out);
+        } catch (IOException e) {
+            throw new SerializationException();
+        }
+    }
+
+    @Override
+    public void deserialize(InputStream in) {
+        try {
+            doDeserialize(in);
+        } catch (IOException e) {
+            throw new SerializationException();
+        }
+    }
+
     private static int getIndex(char letter) {
         return letter - SMALLEST_LETTER;
     }
@@ -96,45 +114,36 @@ public class StringSetImpl implements StringSet, StreamSerializable {
             }
         }
     }
-
-    @Override
-    public void serialize(OutputStream out) {
-        try {
-            DataOutputStream dataOut = new DataOutputStream(out);
-            dataOut.writeBoolean(endState);
-            for (StringSetImpl child : transitions) {
-                dataOut.writeBoolean(child != null);
-                if (child != null) {
-                    child.serialize(dataOut);
-                }
+    
+    private void doSerialize(OutputStream out) throws IOException {
+        DataOutputStream dataOut = new DataOutputStream(out);
+        dataOut.writeBoolean(endState);
+        for (StringSetImpl child : transitions) {
+            dataOut.writeBoolean(child != null);
+            if (child != null) {
+                child.serialize(dataOut);
             }
-        } catch (IOException ioException) {
-            throw new SerializationException();
         }
     }
 
-    @Override
-    public void deserialize(InputStream in) {
-        try {
-            DataInputStream dataIn = new DataInputStream(in);
-            size = 0;
+    private void doDeserialize(InputStream in) throws IOException {
+        DataInputStream dataIn = new DataInputStream(in);
+        size = 0;
 
-            endState = dataIn.readBoolean();
-            if (endState) {
-                ++size;
-            }
+        endState = dataIn.readBoolean();
+        if (endState) {
+            ++size;
+        }
 
-            for (int i = 0; i < transitions.length; ++i) {
-                if (dataIn.readBoolean()) {
-                    transitions[i] = new StringSetImpl();
-                    transitions[i].deserialize(dataIn);
-                    size += transitions[i].size;
-                } else {
-                    transitions[i] = null;
-                }
+        for (int i = 0; i < transitions.length; ++i) {
+            if (dataIn.readBoolean()) {
+                transitions[i] = new StringSetImpl();
+                transitions[i].deserialize(dataIn);
+                size += transitions[i].size;
+            } else {
+                transitions[i] = null;
             }
-        } catch (IOException ioException) {
-            throw new SerializationException();
         }
     }
+
 }

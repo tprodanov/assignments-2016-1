@@ -7,30 +7,33 @@ public class PredicateTest {
 
     @Test
     public void testApply() {
-        assertTrue(TestFunctions.isEven.apply(4));
-        assertFalse(TestFunctions.isEven.apply(5));
+        final int four = 4;
+        final int five = 5;
+        assertTrue(TestFunctions.IS_EVEN.apply(four));
+        assertFalse(TestFunctions.IS_EVEN.apply(five));
 
-        TestFunctions.aPredicate.apply(TestFunctions.aInstance);
-        TestFunctions.aPredicate.apply(TestFunctions.bInstance);
+        TestFunctions.A_PREDICATE.apply(TestFunctions.A_INSTANCE);
+        TestFunctions.A_PREDICATE.apply(TestFunctions.B_INSTANCE);
 
-        TestFunctions.bPredicate.apply(TestFunctions.bInstance);
+        TestFunctions.B_PREDICATE.apply(TestFunctions.B_INSTANCE);
         // Should not compile
-        // TestFunctions.bPredicate.apply(TestFunctions.aInstance);
+        // TestFunctions.B_PREDICATE.apply(TestFunctions.A_INSTANCE);
     }
 
     @Test
     public void testTrueFalse() {
         assertTrue(Predicate.ALWAYS_TRUE.apply(true));
         assertTrue(Predicate.ALWAYS_TRUE.apply(false));
-        assertTrue(Predicate.ALWAYS_TRUE.apply(TestFunctions.aInstance));
-        assertTrue(Predicate.ALWAYS_TRUE.apply(TestFunctions.bInstance));
-        assertTrue(Predicate.ALWAYS_TRUE.apply(12000000));
+        assertTrue(Predicate.ALWAYS_TRUE.apply(TestFunctions.A_INSTANCE));
+        assertTrue(Predicate.ALWAYS_TRUE.apply(TestFunctions.B_INSTANCE));
+        final int trashInt = 121343523;
+        assertTrue(Predicate.ALWAYS_TRUE.apply(trashInt));
 
         assertFalse(Predicate.ALWAYS_FALSE.apply(true));
         assertFalse(Predicate.ALWAYS_FALSE.apply(false));
-        assertFalse(Predicate.ALWAYS_FALSE.apply(TestFunctions.aInstance));
-        assertFalse(Predicate.ALWAYS_FALSE.apply(TestFunctions.bInstance));
-        assertFalse(Predicate.ALWAYS_FALSE.apply(12000000));
+        assertFalse(Predicate.ALWAYS_FALSE.apply(TestFunctions.A_INSTANCE));
+        assertFalse(Predicate.ALWAYS_FALSE.apply(TestFunctions.B_INSTANCE));
+        assertFalse(Predicate.ALWAYS_FALSE.apply(trashInt));
     }
 
     @Test
@@ -40,25 +43,29 @@ public class PredicateTest {
         assertFalse(Predicate.ALWAYS_TRUE.and(Predicate.ALWAYS_FALSE).apply(null));
         assertFalse(Predicate.ALWAYS_FALSE.and(Predicate.ALWAYS_TRUE).apply(null));
 
-        assertTrue(TestFunctions.isEven.and(TestFunctions.isPositive).apply(10));
-        assertFalse(TestFunctions.isEven.and(TestFunctions.isPositive).apply(-10));
-        assertFalse(TestFunctions.isPositive.and(TestFunctions.isEven).apply(-10));
-        assertFalse(TestFunctions.isEven.and(TestFunctions.isPositive).apply(9));
+        final int ten = 10;
+        final int minusTen = -10;
+        final int nine = 9;
+        assertTrue(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(ten));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(minusTen));
+        assertFalse(TestFunctions.IS_POSITIVE.and(TestFunctions.IS_EVEN).apply(minusTen));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(nine));
 
-        assertTrue(TestFunctions.isEven.or(TestFunctions.isPositive).apply(11));
-        assertFalse(TestFunctions.isEven.and(TestFunctions.isEven.not()).apply(10));
-        assertFalse(TestFunctions.isEven.and(TestFunctions.isEven.not()).apply(11));
-        assertTrue(TestFunctions.isEven.not().apply(11));
+        final int eleven = 11;
+        assertTrue(TestFunctions.IS_EVEN.or(TestFunctions.IS_POSITIVE).apply(eleven));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(ten));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(eleven));
+        assertTrue(TestFunctions.IS_EVEN.not().apply(eleven));
     }
 
     @Test
     public void testLaziness() {
-        assertTrue(Predicate.ALWAYS_TRUE.or(TestFunctions.throwingPredicate).apply(null));
-        assertFalse(Predicate.ALWAYS_FALSE.and(TestFunctions.throwingPredicate).apply(null));
+        assertTrue(Predicate.ALWAYS_TRUE.or(TestFunctions.THROWING_PREDICATE).apply(null));
+        assertFalse(Predicate.ALWAYS_FALSE.and(TestFunctions.THROWING_PREDICATE).apply(null));
     }
 
     @Test(expected = TestFunctions.PredicateError.class)
     public void testLazinessLeftSide() {
-        TestFunctions.throwingPredicate.or(Predicate.ALWAYS_TRUE).apply(null);
+        TestFunctions.THROWING_PREDICATE.or(Predicate.ALWAYS_TRUE).apply(null);
     }
 }

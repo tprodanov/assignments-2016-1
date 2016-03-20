@@ -13,8 +13,9 @@ public class CollectionsTest {
 
     public CollectionsTest() {
         Random random = new Random();
+        final int randomRange = 1000;
         for (int i = 0; i < randomIntListSize; ++i) {
-            randomIntList.add(random.nextInt(1000));
+            randomIntList.add(random.nextInt(randomRange));
         }
     }
 
@@ -23,22 +24,22 @@ public class CollectionsTest {
         Iterable<TestFunctions.A> listOfA = new ArrayList<>();
         Iterable<TestFunctions.B> listOfB = new ArrayList<>();
 
-        Collections.map(TestFunctions.aToInt, listOfA);
-        Collections.map(TestFunctions.bToInt, listOfB);
-        Collections.map(TestFunctions.aToInt, listOfB);
+        Collections.map(TestFunctions.A_TO_INT, listOfA);
+        Collections.map(TestFunctions.B_TO_INT, listOfB);
+        Collections.map(TestFunctions.A_TO_INT, listOfB);
         // Should not compile
-        // Collections.map(TestFunctions.bToInt, listOfA);
-        Collections.map(TestFunctions.aPredicate, listOfA);
+        // Collections.map(TestFunctions.B_TO_INT, listOfA);
+        Collections.map(TestFunctions.A_PREDICATE, listOfA);
 
-        Collections.filter(TestFunctions.aPredicate, listOfA);
-        Collections.filter(TestFunctions.bPredicate, listOfB);
-        Collections.filter(TestFunctions.aPredicate, listOfB);
+        Collections.filter(TestFunctions.A_PREDICATE, listOfA);
+        Collections.filter(TestFunctions.B_PREDICATE, listOfB);
+        Collections.filter(TestFunctions.A_PREDICATE, listOfB);
     }
 
     @Test
     public void testMap() {
         int i = 0;
-        for (int mapElement : Collections.map(TestFunctions.square, randomIntList)) {
+        for (int mapElement : Collections.map(TestFunctions.SQUARE, randomIntList)) {
             assertTrue(i < randomIntListSize);
             assertEquals(randomIntList.get(i) * randomIntList.get(i), mapElement);
             ++i;
@@ -58,7 +59,7 @@ public class CollectionsTest {
         assertFalse(Collections.filter(Predicate.ALWAYS_FALSE, randomIntList).iterator().hasNext());
 
         i = 0;
-        for (int afterFilterElement : Collections.filter(TestFunctions.isEven, randomIntList)) {
+        for (int afterFilterElement : Collections.filter(TestFunctions.IS_EVEN, randomIntList)) {
             while (randomIntList.get(i) % 2 == 1 && i < randomIntListSize) {
                 ++i;
             }
@@ -75,7 +76,7 @@ public class CollectionsTest {
     @Test
     public void testTakeWhile() {
         int i = 0;
-        for (int takeWhileElement : Collections.takeWhile(TestFunctions.isEven, randomIntList)) {
+        for (int takeWhileElement : Collections.takeWhile(TestFunctions.IS_EVEN, randomIntList)) {
             assertTrue(i < randomIntListSize);
             assertTrue(randomIntList.get(i) % 2 == 0);
             assertEquals(takeWhileElement, (int) randomIntList.get(i));
@@ -88,7 +89,7 @@ public class CollectionsTest {
     @Test
     public void testTakeUntil() {
         int i = 0;
-        for (int takeUntilElement : Collections.takeUntil(TestFunctions.isEven, randomIntList)) {
+        for (int takeUntilElement : Collections.takeUntil(TestFunctions.IS_EVEN, randomIntList)) {
             assertTrue(i < randomIntListSize);
             assertTrue(randomIntList.get(i) % 2 == 1);
             assertEquals(takeUntilElement, (int) randomIntList.get(i));
@@ -101,7 +102,7 @@ public class CollectionsTest {
     @Test
     public void testFoldl() {
         int i = 0;
-        Deque<Integer> deque = Collections.foldl(TestFunctions.pushBack,
+        Deque<Integer> deque = Collections.foldl(TestFunctions.PUSH_BACK,
                 new ArrayDeque<Integer>(),
                 randomIntList);
         for (int dequeElement : deque) {
@@ -115,7 +116,7 @@ public class CollectionsTest {
     @Test
     public void testFoldr() {
         int i = 0;
-        Deque<Integer> deque = Collections.foldr(TestFunctions.pushFront,
+        Deque<Integer> deque = Collections.foldr(TestFunctions.PUSH_FRONT,
                 new ArrayDeque<Integer>(),
                 randomIntList);
         for (int dequeElement : deque) {
@@ -128,6 +129,6 @@ public class CollectionsTest {
 
 
     private final ArrayList<Integer> randomIntList = new ArrayList<>();
-    private int randomIntListSize = 100;
+    private final int randomIntListSize = 100;
 
 }

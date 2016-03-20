@@ -1,7 +1,5 @@
 package ru.spbau.mit;
 
-import java.util.Objects;
-
 public abstract class Predicate<T> extends Function1<T, Boolean> {
 
     public static final Predicate<Object> ALWAYS_TRUE = new Predicate<Object>() {

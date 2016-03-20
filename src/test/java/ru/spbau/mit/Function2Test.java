@@ -8,54 +8,65 @@ public class Function2Test {
     @Test
     public void testApply() {
 
-        assertEquals((int) TestFunctions.sum.apply(10, 11), 21);
-        assertEquals((int) TestFunctions.xSquarePlusY.apply(10, 11), 111);
+        final int ten = 10;
+        final int eleven = 11;
+        final int twentyOne = 21;
+        final int oneHundredEleven = 111;
+        assertEquals((int) TestFunctions.SUM.apply(ten, eleven), twentyOne);
+        assertEquals((int) TestFunctions.X_SQUARE_PLUS_Y.apply(ten, eleven), oneHundredEleven);
 
-        TestFunctions.aaToInt.apply(TestFunctions.aInstance, TestFunctions.aInstance);
-        TestFunctions.aaToInt.apply(TestFunctions.bInstance, TestFunctions.aInstance);
-        TestFunctions.aaToInt.apply(TestFunctions.aInstance, TestFunctions.bInstance);
-        TestFunctions.aaToInt.apply(TestFunctions.bInstance, TestFunctions.bInstance);
+        TestFunctions.AA_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.A_INSTANCE);
+        TestFunctions.AA_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.A_INSTANCE);
+        TestFunctions.AA_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.B_INSTANCE);
+        TestFunctions.AA_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.B_INSTANCE);
 
-        TestFunctions.bbToInt.apply(TestFunctions.bInstance, TestFunctions.bInstance);
+        TestFunctions.BB_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.B_INSTANCE);
         // Should not compile
-        // TestFunctions.bbToInt.apply(TestFunctions.bInstance, TestFunctions.aInstance);
-        // TestFunctions.bbToInt.apply(TestFunctions.aInstance, TestFunctions.bInstance);
-        // TestFunctions.bbToInt.apply(TestFunctions.aInstance, TestFunctions.aInstance);
+        // TestFunctions.BB_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.A_INSTANCE);
+        // TestFunctions.BB_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.B_INSTANCE);
+        // TestFunctions.BB_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.A_INSTANCE);
     }
 
     @Test
     public void testCompose() {
-        assertEquals((int) TestFunctions.sum.compose(TestFunctions.square).apply(3, 4), 49);
-        assertEquals((int) TestFunctions.xSquarePlusY.compose(TestFunctions.square).apply(3, 4), 169);
+        final int fortyNine = 49;
+        final int oneHundredSixtyNine = 169;
+        assertEquals((int) TestFunctions.SUM.compose(TestFunctions.SQUARE).apply(THREE, FOUR), fortyNine);
+        assertEquals((int) TestFunctions.X_SQUARE_PLUS_Y.
+                                                compose(TestFunctions.SQUARE).apply(THREE, FOUR),
+                    oneHundredSixtyNine);
 
-        TestFunctions.intIntToA.compose(TestFunctions.aToInt);
-        TestFunctions.intIntToB.compose(TestFunctions.aToInt);
+        TestFunctions.INT_INT_TO_A.compose(TestFunctions.A_TO_INT);
+        TestFunctions.INT_INT_TO_B.compose(TestFunctions.A_TO_INT);
         // Should not compile
-        // TestFunctions.intIntToA.compose(TestFunctions.bToInt);
+        // TestFunctions.INT_INT_TO_A.compose(TestFunctions.B_TO_INT);
     }
 
     @Test
     public void testBind1() {
-        assertEquals(TestFunctions.sum.apply(3, 4),
-                     TestFunctions.sum.bind1(3).apply(4));
-        assertEquals(TestFunctions.xSquarePlusY.apply(3, 4),
-                     TestFunctions.xSquarePlusY.bind1(3).apply(4));
+        assertEquals(TestFunctions.SUM.apply(THREE, FOUR),
+                     TestFunctions.SUM.bind1(THREE).apply(FOUR));
+        assertEquals(TestFunctions.X_SQUARE_PLUS_Y.apply(THREE, FOUR),
+                     TestFunctions.X_SQUARE_PLUS_Y.bind1(THREE).apply(FOUR));
     }
 
     @Test
     public void testBind2() {
-        assertEquals(TestFunctions.sum.apply(3, 4),
-                     TestFunctions.sum.bind2(4).apply(3));
-        assertEquals(TestFunctions.xSquarePlusY.apply(3, 4),
-                     TestFunctions.xSquarePlusY.bind2(4).apply(3));
+        assertEquals(TestFunctions.SUM.apply(THREE, FOUR),
+                     TestFunctions.SUM.bind2(FOUR).apply(THREE));
+        assertEquals(TestFunctions.X_SQUARE_PLUS_Y.apply(THREE, FOUR),
+                     TestFunctions.X_SQUARE_PLUS_Y.bind2(FOUR).apply(THREE));
     }
 
     @Test
     public void testCurry() {
-        assertEquals(TestFunctions.sum.apply(3, 4),
-                     TestFunctions.sum.curry().apply(3).apply(4));
-        assertEquals(TestFunctions.xSquarePlusY.apply(3, 4),
-                     TestFunctions.xSquarePlusY.curry().apply(3).apply(4));
+        assertEquals(TestFunctions.SUM.apply(THREE, FOUR),
+                     TestFunctions.SUM.curry().apply(THREE).apply(FOUR));
+        assertEquals(TestFunctions.X_SQUARE_PLUS_Y.apply(THREE, FOUR),
+                     TestFunctions.X_SQUARE_PLUS_Y.curry().apply(THREE).apply(FOUR));
     }
+
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
 
 }

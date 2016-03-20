@@ -8,25 +8,29 @@ public class Function1Test {
 
     @Test
     public void testApply() {
-        assertEquals((int) TestFunctions.square.apply(3), 9);
+        final int three = 3;
+        final int nine = 9;
+        assertEquals((int) TestFunctions.SQUARE.apply(three), nine);
 
-        TestFunctions.aToInt.apply(TestFunctions.aInstance);
-        TestFunctions.aToInt.apply(TestFunctions.bInstance);
-        TestFunctions.bToInt.apply(TestFunctions.bInstance);
+        TestFunctions.A_TO_INT.apply(TestFunctions.A_INSTANCE);
+        TestFunctions.A_TO_INT.apply(TestFunctions.B_INSTANCE);
+        TestFunctions.B_TO_INT.apply(TestFunctions.B_INSTANCE);
 
         // Should not compile
-        // TestFunctions.bToInt.apply(TestFunctions.aInstance);
+        // TestFunctions.B_TO_INT.apply(TestFunctions.A_INSTANCE);
     }
 
     @Test
     public void testCompose() {
-        assertEquals((int) TestFunctions.square.compose(TestFunctions.square).apply(3), 81);
+        final int three = 3;
+        final int eightyOne = 81;
+        assertEquals((int) TestFunctions.SQUARE.compose(TestFunctions.SQUARE).apply(three), eightyOne);
 
-        TestFunctions.aToInt.compose(TestFunctions.intToA);
-        TestFunctions.intToA.compose(TestFunctions.aToInt);
-        TestFunctions.intToB.compose(TestFunctions.aToInt);
+        TestFunctions.A_TO_INT.compose(TestFunctions.INT_TO_A);
+        TestFunctions.INT_TO_A.compose(TestFunctions.A_TO_INT);
+        TestFunctions.INT_TO_B.compose(TestFunctions.A_TO_INT);
         // Should not compile
-        // TestFunctions.intToA.compose(TestFunctions.bToInt);
+        // TestFunctions.INT_TO_A.compose(TestFunctions.B_TO_INT);
     }
 
 }

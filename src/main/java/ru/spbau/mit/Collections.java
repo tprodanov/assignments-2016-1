@@ -2,7 +2,7 @@ package ru.spbau.mit;
 
 import java.util.ArrayList;
 
-public class Collections {
+public final class Collections {
 
     // Here and below it is possible to make Iterable<? extends T>, but it is not intuitive for users
     public static <T, R> Iterable<R> map(Function1<? super T, R> f, Iterable<T> a) {
@@ -61,6 +61,10 @@ public class Collections {
             result.add(t);
         }
         return result;
+    }
+
+    private Collections() {
+        // EMPTY
     }
 
 }

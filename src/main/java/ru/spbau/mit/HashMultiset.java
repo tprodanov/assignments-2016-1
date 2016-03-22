@@ -57,7 +57,7 @@ public class HashMultiset<E> extends AbstractSet<E> implements Multiset<E> {
 
     @Override
     public Set<? extends Entry<E>> entrySet() {
-        return new HashMultisetEntrySet<>(elementCount.entrySet());
+        return new HashMultisetEntrySet<>(elementCount.entrySet(), this);
     }
 
     @Override

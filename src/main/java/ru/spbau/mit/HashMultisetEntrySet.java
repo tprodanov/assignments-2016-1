@@ -7,13 +7,14 @@ import java.util.Set;
 
 public class HashMultisetEntrySet<E> extends AbstractSet<Multiset.Entry<E>> {
 
-    public HashMultisetEntrySet(Set<Map.Entry<E, Integer>> entrySet) {
+    public HashMultisetEntrySet(Set<Map.Entry<E, Integer>> entrySet, HashMultiset<E> parent) {
+        this.parent = parent;
         this.entrySet = entrySet;
     }
 
     @Override
     public Iterator<Multiset.Entry<E>> iterator() {
-        return new MultisetEntryIterator<>(entrySet.iterator());
+        return new MultisetEntryIterator<>(entrySet.iterator(), parent);
     }
 
     @Override
@@ -21,6 +22,7 @@ public class HashMultisetEntrySet<E> extends AbstractSet<Multiset.Entry<E>> {
         return entrySet.size();
     }
 
+    private HashMultiset<E> parent;
     private Set<Map.Entry<E, Integer>> entrySet;
 
 }

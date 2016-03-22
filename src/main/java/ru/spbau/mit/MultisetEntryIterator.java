@@ -5,9 +5,11 @@ import java.util.Map;
 
 public class MultisetEntryIterator<E> implements Iterator<Multiset.Entry<E>> {
 
-    public MultisetEntryIterator(Iterator<Map.Entry<E, Integer>> entrySetIterator) {
+    public MultisetEntryIterator(Iterator<Map.Entry<E, Integer>> entrySetIterator,
+                                 HashMultiset<E> parent) {
+        this.parent = parent;
         this.entrySetIterator = entrySetIterator;
-        current = new HashMultisetEntry<>(entrySetIterator.next());
+        current = new HashMultisetEntry<>(entrySetIterator.next(), parent);
     }
 
     @Override
@@ -19,7 +21,7 @@ public class MultisetEntryIterator<E> implements Iterator<Multiset.Entry<E>> {
     public Multiset.Entry<E> next() {
         Multiset.Entry<E> temp = current;
         if (entrySetIterator.hasNext()) {
-            current = new HashMultisetEntry<>(entrySetIterator.next());
+            current = new HashMultisetEntry<>(entrySetIterator.next(), parent);
         } else {
             current = null;
         }
@@ -33,6 +35,7 @@ public class MultisetEntryIterator<E> implements Iterator<Multiset.Entry<E>> {
         }
     }
 
+    private HashMultiset<E> parent;
     private HashMultisetEntry<E> current;
     private Iterator<Map.Entry<E, Integer>> entrySetIterator;
 

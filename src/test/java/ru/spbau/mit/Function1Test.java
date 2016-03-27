@@ -15,9 +15,6 @@ public class Function1Test {
         TestFunctions.A_TO_INT.apply(TestFunctions.A_INSTANCE);
         TestFunctions.A_TO_INT.apply(TestFunctions.B_INSTANCE);
         TestFunctions.B_TO_INT.apply(TestFunctions.B_INSTANCE);
-
-        // Should not compile
-        // TestFunctions.B_TO_INT.apply(TestFunctions.A_INSTANCE);
     }
 
     @Test
@@ -29,8 +26,6 @@ public class Function1Test {
         TestFunctions.A_TO_INT.compose(TestFunctions.INT_TO_A);
         TestFunctions.INT_TO_A.compose(TestFunctions.A_TO_INT);
         TestFunctions.INT_TO_B.compose(TestFunctions.A_TO_INT);
-        // Should not compile
-        // TestFunctions.INT_TO_A.compose(TestFunctions.B_TO_INT);
     }
 
 }

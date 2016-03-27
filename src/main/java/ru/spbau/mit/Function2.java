@@ -35,15 +35,8 @@ public abstract class Function2<T1, T2, R> {
 
         return new Function1<T1, Function1<T2, R>>() {
             @Override
-            public Function1<T2, R> apply(final T1 t1) {
-
-                return new Function1<T2, R>() {
-                    @Override
-                    public R apply(T2 t2) {
-                        return Function2.this.apply(t1, t2);
-                    }
-                };
-
+            public Function1<T2, R> apply(T1 t1) {
+                return bind1(t1);
             }
         };
 

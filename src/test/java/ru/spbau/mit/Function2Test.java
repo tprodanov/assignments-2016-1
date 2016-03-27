@@ -21,10 +21,6 @@ public class Function2Test {
         TestFunctions.AA_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.B_INSTANCE);
 
         TestFunctions.BB_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.B_INSTANCE);
-        // Should not compile
-        // TestFunctions.BB_TO_INT.apply(TestFunctions.B_INSTANCE, TestFunctions.A_INSTANCE);
-        // TestFunctions.BB_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.B_INSTANCE);
-        // TestFunctions.BB_TO_INT.apply(TestFunctions.A_INSTANCE, TestFunctions.A_INSTANCE);
     }
 
     @Test
@@ -38,8 +34,6 @@ public class Function2Test {
 
         TestFunctions.INT_INT_TO_A.compose(TestFunctions.A_TO_INT);
         TestFunctions.INT_INT_TO_B.compose(TestFunctions.A_TO_INT);
-        // Should not compile
-        // TestFunctions.INT_INT_TO_A.compose(TestFunctions.B_TO_INT);
     }
 
     @Test

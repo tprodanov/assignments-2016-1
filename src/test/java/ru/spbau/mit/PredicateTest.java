@@ -16,8 +16,6 @@ public class PredicateTest {
         TestFunctions.A_PREDICATE.apply(TestFunctions.B_INSTANCE);
 
         TestFunctions.B_PREDICATE.apply(TestFunctions.B_INSTANCE);
-        // Should not compile
-        // TestFunctions.B_PREDICATE.apply(TestFunctions.A_INSTANCE);
     }
 
     @Test

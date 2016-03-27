@@ -4,14 +4,16 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Random;
+import java.util.*;
 
 public class CollectionsTest {
 
     public CollectionsTest() {
+        final int smallIntListSize = 4;
+        for (int i = 1; i <= smallIntListSize; ++i) {
+            smallIntList.add(i);
+        }
+
         Random random = new Random();
         final int randomRange = 1000;
         for (int i = 0; i < randomIntListSize; ++i) {
@@ -27,13 +29,26 @@ public class CollectionsTest {
         Collections.map(TestFunctions.A_TO_INT, listOfA);
         Collections.map(TestFunctions.B_TO_INT, listOfB);
         Collections.map(TestFunctions.A_TO_INT, listOfB);
-        // Should not compile
-        // Collections.map(TestFunctions.B_TO_INT, listOfA);
         Collections.map(TestFunctions.A_PREDICATE, listOfA);
 
         Collections.filter(TestFunctions.A_PREDICATE, listOfA);
         Collections.filter(TestFunctions.B_PREDICATE, listOfB);
         Collections.filter(TestFunctions.A_PREDICATE, listOfB);
+    }
+
+    @Test
+    public void simpleTestMap() {
+        List<Integer> squares = new ArrayList<>();
+        squares.add(1);
+        squares.add(FOUR);
+
+        final int nine = 9;
+        squares.add(nine);
+
+        final int sixteen = 16;
+        squares.add(sixteen);
+
+        assertIterableEquals(squares, Collections.map(TestFunctions.SQUARE, smallIntList));
     }
 
     @Test
@@ -45,6 +60,15 @@ public class CollectionsTest {
             ++i;
         }
         assertEquals(randomIntListSize, i);
+    }
+
+    @Test
+    public void simpleTestFilter() {
+        List<Integer> evenNumbers = new ArrayList<>();
+        evenNumbers.add(2);
+        evenNumbers.add(FOUR);
+
+        assertIterableEquals(evenNumbers, Collections.filter(TestFunctions.IS_EVEN, smallIntList));
     }
 
     @Test
@@ -74,6 +98,18 @@ public class CollectionsTest {
     }
 
     @Test
+    public void simpleTestTakeWhileUntil() {
+        List<Integer> firstTwo = new ArrayList<>();
+        firstTwo.add(1);
+        firstTwo.add(2);
+
+        assertIterableEquals(firstTwo,
+                Collections.takeWhile(TestFunctions.LESS_EQUAL_TWO, smallIntList));
+        assertIterableEquals(firstTwo,
+                Collections.takeUntil(TestFunctions.LESS_EQUAL_TWO.not(), smallIntList));
+    }
+
+    @Test
     public void testTakeWhile() {
         int i = 0;
         for (int takeWhileElement : Collections.takeWhile(TestFunctions.IS_EVEN, randomIntList)) {
@@ -84,6 +120,17 @@ public class CollectionsTest {
         }
 
         assertTrue(i == randomIntListSize || randomIntList.get(i) % 2 == 1);
+    }
+
+    @Test
+    public void simpleTestFold() {
+        final int oneHundredFortyEight = 148;
+        assertEquals(oneHundredFortyEight,
+                (int) Collections.foldl(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
+
+        final int thirty = 30;
+        assertEquals(thirty,
+                (int) Collections.foldr(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
     }
 
     @Test
@@ -127,8 +174,27 @@ public class CollectionsTest {
         assertTrue(i == randomIntListSize);
     }
 
+    @Test
+    public void foldlTypesTest() {
+        // Why "? extends G" is important in foldl declaration
+        List<Integer> intList = new ArrayList<>();
+        Collections.foldl(TestFunctions.A_INT_TO_B, TestFunctions.A_INSTANCE, intList);
+    }
 
-    private final ArrayList<Integer> randomIntList = new ArrayList<>();
+    private <T> void assertIterableEquals(Iterable<T> a, Iterable<T> b) {
+        Iterator<T> aIterator = a.iterator();
+        for (T bElement : b) {
+            assertTrue(aIterator.hasNext());
+            assertEquals(aIterator.next(), bElement);
+        }
+        assertFalse(aIterator.hasNext());
+    }
+
+    private final List<Integer> randomIntList = new ArrayList<>();
     private final int randomIntListSize = 100;
+
+    private final List<Integer> smallIntList = new ArrayList<>();
+
+    private static final int FOUR = 4;
 
 }

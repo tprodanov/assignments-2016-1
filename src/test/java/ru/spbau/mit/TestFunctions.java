@@ -71,6 +71,13 @@ public final class TestFunctions {
         }
     };
 
+    public static final Function2<A, Integer, B> A_INT_TO_B = new Function2<A, Integer, B>() {
+        @Override
+        public B apply(A a, Integer integer) {
+            return null;
+        }
+    };
+
     public static final Predicate<A> A_PREDICATE = new Predicate<A>() {
         @Override
         public Boolean apply(A a) {
@@ -96,6 +103,13 @@ public final class TestFunctions {
         @Override
         public Boolean apply(Integer integer) {
             return integer > 0;
+        }
+    };
+
+    public static final Predicate<Integer> LESS_EQUAL_TWO = new Predicate<Integer>() {
+        @Override
+        public Boolean apply(Integer integer) {
+            return integer <= 2;
         }
     };
 

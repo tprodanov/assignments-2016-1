@@ -8,9 +8,7 @@ public class Function1Test {
 
     @Test
     public void testApply() {
-        final int three = 3;
-        final int nine = 9;
-        assertEquals((int) TestFunctions.SQUARE.apply(three), nine);
+        assertEquals((int) TestFunctions.SQUARE.apply(3), 9);
 
         TestFunctions.A_TO_INT.apply(TestFunctions.A_INSTANCE);
         TestFunctions.A_TO_INT.apply(TestFunctions.B_INSTANCE);
@@ -19,9 +17,7 @@ public class Function1Test {
 
     @Test
     public void testCompose() {
-        final int three = 3;
-        final int eightyOne = 81;
-        assertEquals((int) TestFunctions.SQUARE.compose(TestFunctions.SQUARE).apply(three), eightyOne);
+        assertEquals((int) TestFunctions.SQUARE.compose(TestFunctions.SQUARE).apply(3), 81);
 
         TestFunctions.A_TO_INT.compose(TestFunctions.INT_TO_A);
         TestFunctions.INT_TO_A.compose(TestFunctions.A_TO_INT);

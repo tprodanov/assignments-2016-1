@@ -7,10 +7,8 @@ public class PredicateTest {
 
     @Test
     public void testApply() {
-        final int four = 4;
-        final int five = 5;
-        assertTrue(TestFunctions.IS_EVEN.apply(four));
-        assertFalse(TestFunctions.IS_EVEN.apply(five));
+        assertTrue(TestFunctions.IS_EVEN.apply(4));
+        assertFalse(TestFunctions.IS_EVEN.apply(5));
 
         TestFunctions.A_PREDICATE.apply(TestFunctions.A_INSTANCE);
         TestFunctions.A_PREDICATE.apply(TestFunctions.B_INSTANCE);
@@ -41,19 +39,15 @@ public class PredicateTest {
         assertFalse(Predicate.ALWAYS_TRUE.and(Predicate.ALWAYS_FALSE).apply(null));
         assertFalse(Predicate.ALWAYS_FALSE.and(Predicate.ALWAYS_TRUE).apply(null));
 
-        final int ten = 10;
-        final int minusTen = -10;
-        final int nine = 9;
-        assertTrue(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(ten));
-        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(minusTen));
-        assertFalse(TestFunctions.IS_POSITIVE.and(TestFunctions.IS_EVEN).apply(minusTen));
-        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(nine));
+        assertTrue(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(10));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(-10));
+        assertFalse(TestFunctions.IS_POSITIVE.and(TestFunctions.IS_EVEN).apply(-10));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_POSITIVE).apply(9));
 
-        final int eleven = 11;
-        assertTrue(TestFunctions.IS_EVEN.or(TestFunctions.IS_POSITIVE).apply(eleven));
-        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(ten));
-        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(eleven));
-        assertTrue(TestFunctions.IS_EVEN.not().apply(eleven));
+        assertTrue(TestFunctions.IS_EVEN.or(TestFunctions.IS_POSITIVE).apply(11));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(10));
+        assertFalse(TestFunctions.IS_EVEN.and(TestFunctions.IS_EVEN.not()).apply(11));
+        assertTrue(TestFunctions.IS_EVEN.not().apply(11));
     }
 
     @Test

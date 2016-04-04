@@ -8,6 +8,10 @@ import java.util.*;
 
 public class CollectionsTest {
 
+    private final int randomIntListSize = 100;
+    private final List<Integer> randomIntList = new ArrayList<>();
+    private final List<Integer> smallIntList = new ArrayList<>();
+
     public CollectionsTest() {
         final int smallIntListSize = 4;
         for (int i = 1; i <= smallIntListSize; ++i) {
@@ -22,7 +26,7 @@ public class CollectionsTest {
     }
 
     @Test
-    public void compilationTest() {
+    public void testCompilation() {
         Iterable<TestFunctions.A> listOfA = new ArrayList<>();
         Iterable<TestFunctions.B> listOfB = new ArrayList<>();
 
@@ -37,18 +41,10 @@ public class CollectionsTest {
     }
 
     @Test
-    public void simpleTestMap() {
-        List<Integer> squares = new ArrayList<>();
-        squares.add(1);
-        squares.add(FOUR);
+    public void testSmallMap() {
+        List<Integer> squares = Arrays.asList(1, 4, 9, 16);
 
-        final int nine = 9;
-        squares.add(nine);
-
-        final int sixteen = 16;
-        squares.add(sixteen);
-
-        assertIterableEquals(squares, Collections.map(TestFunctions.SQUARE, smallIntList));
+        assertEquals(squares, Collections.map(TestFunctions.SQUARE, smallIntList));
     }
 
     @Test
@@ -63,12 +59,10 @@ public class CollectionsTest {
     }
 
     @Test
-    public void simpleTestFilter() {
-        List<Integer> evenNumbers = new ArrayList<>();
-        evenNumbers.add(2);
-        evenNumbers.add(FOUR);
+    public void testSmallFilter() {
+        List<Integer> evenNumbers = Arrays.asList(2, 4);
 
-        assertIterableEquals(evenNumbers, Collections.filter(TestFunctions.IS_EVEN, smallIntList));
+        assertEquals(evenNumbers, Collections.filter(TestFunctions.IS_EVEN, smallIntList));
     }
 
     @Test
@@ -98,14 +92,12 @@ public class CollectionsTest {
     }
 
     @Test
-    public void simpleTestTakeWhileUntil() {
-        List<Integer> firstTwo = new ArrayList<>();
-        firstTwo.add(1);
-        firstTwo.add(2);
+    public void testSmallTakeWhileUntil() {
+        List<Integer> firstTwo = Arrays.asList(1, 2);
 
-        assertIterableEquals(firstTwo,
+        assertEquals(firstTwo,
                 Collections.takeWhile(TestFunctions.LESS_EQUAL_TWO, smallIntList));
-        assertIterableEquals(firstTwo,
+        assertEquals(firstTwo,
                 Collections.takeUntil(TestFunctions.LESS_EQUAL_TWO.not(), smallIntList));
     }
 
@@ -123,14 +115,9 @@ public class CollectionsTest {
     }
 
     @Test
-    public void simpleTestFold() {
-        final int oneHundredFortyEight = 148;
-        assertEquals(oneHundredFortyEight,
-                (int) Collections.foldl(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
-
-        final int thirty = 30;
-        assertEquals(thirty,
-                (int) Collections.foldr(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
+    public void testSmallFold() {
+        assertEquals(148, (int) Collections.foldl(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
+        assertEquals(30, (int) Collections.foldr(TestFunctions.X_SQUARE_PLUS_Y, 0, smallIntList));
     }
 
     @Test
@@ -175,26 +162,10 @@ public class CollectionsTest {
     }
 
     @Test
-    public void foldlTypesTest() {
+    public void testFoldlTypes() {
         // Why "? extends G" is important in foldl declaration
         List<Integer> intList = new ArrayList<>();
         Collections.foldl(TestFunctions.A_INT_TO_B, TestFunctions.A_INSTANCE, intList);
     }
-
-    private <T> void assertIterableEquals(Iterable<T> a, Iterable<T> b) {
-        Iterator<T> aIterator = a.iterator();
-        for (T bElement : b) {
-            assertTrue(aIterator.hasNext());
-            assertEquals(aIterator.next(), bElement);
-        }
-        assertFalse(aIterator.hasNext());
-    }
-
-    private final List<Integer> randomIntList = new ArrayList<>();
-    private final int randomIntListSize = 100;
-
-    private final List<Integer> smallIntList = new ArrayList<>();
-
-    private static final int FOUR = 4;
 
 }

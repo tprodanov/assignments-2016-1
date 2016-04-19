@@ -65,12 +65,12 @@ public final class Injector {
         }
 
         GraphClass node = graphNodes.get(clazz);
-        if (node.isAmbiguous()) {
-            throw new AmbiguousImplementationException();
+        if (node == null || node.getImplementation() == null) {
+            throw new ImplementationNotFoundException();
         }
 
-        if (node.getImplementation() == null) {
-            throw new ImplementationNotFoundException();
+        if (node.isAmbiguous()) {
+            throw new AmbiguousImplementationException();
         }
 
         if (visited.contains(clazz)) {

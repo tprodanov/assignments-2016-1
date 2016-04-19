@@ -48,7 +48,8 @@ public class GraphClass {
     }
 
     private void spreadImplementation(Class<?> implementation) {
-        if (this.implementation != null) {
+        if ((!clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers())) ||
+                this.implementation != null) {
             corrupt();
             return;
         }

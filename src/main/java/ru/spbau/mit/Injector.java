@@ -1,6 +1,7 @@
 package ru.spbau.mit;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 
@@ -29,24 +30,40 @@ public final class Injector {
 
     private static void constructImplementationClasses(List<String> implementationClassNames)
             throws ClassNotFoundException {
+        List<Class<?>> parents = new ArrayList<>();
         for (String className : implementationClassNames) {
             Class<?> currentClass = Class.forName(className);
+            addClass(currentClass, parents);
+        }
 
-            if (!graphNodes.containsKey(currentClass)) {
-                graphNodes.put(currentClass, new GraphClass(currentClass));
-            }
-            GraphClass currentNode = graphNodes.get(currentClass);
-
-            addParent(currentNode, currentClass.getSuperclass());
-            for (Class<?> parentInterface : currentClass.getInterfaces()) {
-                addParent(currentNode, parentInterface);
-            }
+        for (int i = 0; i < parents.size(); ++i) {
+            Class<?> currentClass = parents.get(i);
+            addClass(currentClass, parents);
         }
 
         for (Map.Entry<Class<?>, GraphClass> entry : graphNodes.entrySet()) {
             if (entry.getValue().isFinalImplementation()) {
                 entry.getValue().spreadImplementation();
             }
+        }
+    }
+
+    private static void addClass(Class<?> currentClass, List<Class<?>> parents) {
+        if (!graphNodes.containsKey(currentClass)) {
+            graphNodes.put(currentClass, new GraphClass(currentClass));
+        }
+        GraphClass currentNode = graphNodes.get(currentClass);
+
+
+        Class<?> superclass = currentClass.getSuperclass();
+        addParent(currentNode, superclass);
+        if (superclass != null && Modifier.isAbstract(superclass.getModifiers())) {
+            parents.add(superclass);
+        }
+
+        for (Class<?> parentInterface : currentClass.getInterfaces()) {
+            addParent(currentNode, parentInterface);
+            parents.add(parentInterface);
         }
     }
 

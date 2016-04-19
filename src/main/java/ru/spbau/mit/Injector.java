@@ -18,9 +18,11 @@ public final class Injector {
      * `implementationClassNames` for concrete dependencies.
      */
     public static Object initialize(String rootClassName, List<String> implementationClassNames) throws Exception {
-        Class<?> root = Class.forName(rootClassName);
-        graphNodes.put(root, new GraphClass(root));
+        implementationClassNames = new ArrayList(implementationClassNames);
+        implementationClassNames.add(rootClassName);
         constructImplementationClasses(implementationClassNames);
+
+        Class<?> root = Class.forName(rootClassName);
         return buildObject(root);
     }
 

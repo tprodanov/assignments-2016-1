@@ -94,6 +94,11 @@ public class SmartList<E> extends AbstractList<E> implements List<E> {
 
     @Override
     public void add(int index, E e) {
+        if (index == size) {
+            add(e);
+            return;
+        }
+
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException();
         }

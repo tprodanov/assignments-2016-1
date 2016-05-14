@@ -4,10 +4,14 @@ import java.util.function.Function;
 
 abstract class AbstractLightFuture<R> implements Runnable, LightFuture<R> {
 
-    private ThreadPoolImpl pool;
+    private final ThreadPoolImpl pool;
     private boolean ready = false;
     private R obj;
     private Throwable supplierException;
+
+    AbstractLightFuture(ThreadPoolImpl pool) {
+        this.pool = pool;
+    }
 
     @Override
     public void run() {
@@ -22,6 +26,7 @@ abstract class AbstractLightFuture<R> implements Runnable, LightFuture<R> {
             synchronized (this) {
                 supplierException = exception;
                 ready = true;
+                this.notifyAll();
                 pool.futureFailing(this, exception);
                 return;
             }
@@ -33,6 +38,7 @@ abstract class AbstractLightFuture<R> implements Runnable, LightFuture<R> {
 
         synchronized (this) {
             ready = true;
+            this.notifyAll();
         }
         pool.futureReady(this, obj);
     }
@@ -47,15 +53,15 @@ abstract class AbstractLightFuture<R> implements Runnable, LightFuture<R> {
         if (Thread.interrupted()) {
             throw new InterruptedException();
         }
+
+        while (!ready) {
+            this.wait();
+        }
         if (supplierException != null) {
             throw new LightExecutionException(supplierException);
         }
 
-        if (!ready) {
-            return null;
-        } else {
-            return obj;
-        }
+        return obj;
     }
 
     @Override
@@ -77,10 +83,6 @@ abstract class AbstractLightFuture<R> implements Runnable, LightFuture<R> {
     }
 
     protected abstract R createObject();
-
-    void setPool(ThreadPoolImpl pool) {
-        this.pool = pool;
-    }
 
     void markReady() {
         this.ready = true;

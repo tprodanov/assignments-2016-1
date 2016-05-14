@@ -13,7 +13,7 @@ public class ThreadPoolImpl implements ThreadPool {
 
     public ThreadPoolImpl(int n) {
         for (int i = 0; i < n; ++i) {
-            Thread newThread = new Thread(new ThreadTask(this));
+            Thread newThread = new Thread(this::threadRun);
             threads.add(newThread);
             newThread.start();
         }
@@ -80,6 +80,34 @@ public class ThreadPoolImpl implements ThreadPool {
             return null;
         }
         return futureTasks.poll();
+    }
+
+    private void threadRun() {
+        Runnable currentTask;
+        while (isActive()) {
+            currentTask = obtainNext();
+            if (currentTask == null) {
+                return;
+            }
+
+            currentTask.run();
+        }
+    }
+
+    private Runnable obtainNext() {
+        Runnable currentTask = assignNextTask();
+        while (currentTask == null && isActive()) {
+            try {
+                synchronized (this) {
+                    wait();
+                }
+            } catch (InterruptedException e) {
+                return null;
+            }
+            currentTask = assignNextTask();
+        }
+
+        return currentTask;
     }
 
 }

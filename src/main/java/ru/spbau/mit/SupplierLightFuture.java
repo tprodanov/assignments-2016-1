@@ -7,7 +7,7 @@ class SupplierLightFuture<R> extends AbstractLightFuture<R> {
     private Supplier<R> supplier;
 
     SupplierLightFuture(ThreadPoolImpl pool, Supplier<R> supplier) {
-        setPool(pool);
+        super(pool);
         this.supplier = supplier;
     }
 

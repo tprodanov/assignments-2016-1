@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -56,15 +58,9 @@ public class ThreadPoolTest {
     public void testSubmit() throws InterruptedException, LightExecutionException {
         ThreadPool pool = new ThreadPoolImpl(4);
         List<LightFuture<Integer>> futures = new ArrayList<>();
-        futures.add(pool.submit(new IntSupplier(50, 0)));
-        futures.add(pool.submit(new IntSupplier(50, 1)));
-        futures.add(pool.submit(new IntSupplier(100, 2)));
-        futures.add(pool.submit(new IntSupplier(100, 3)));
-        futures.add(pool.submit(new IntSupplier(50, 4)));
-        futures.add(pool.submit(new IntSupplier(70, 5)));
-        futures.add(pool.submit(new IntSupplier(50, 6)));
+        addIntSuppliers(pool, futures, 0, 7);
 
-        Thread.sleep(300);
+        Thread.sleep(10);
 
         int i = 0;
         for (LightFuture<Integer> future : futures) {
@@ -78,56 +74,56 @@ public class ThreadPoolTest {
     public void testPostponeSubmit() throws InterruptedException, LightExecutionException {
         ThreadPool pool = new ThreadPoolImpl(2);
         List<LightFuture<Integer>> futures = new ArrayList<>();
-        futures.add(pool.submit(new IntSupplier(50, 0)));
-        futures.add(pool.submit(new IntSupplier(50, 1)));
-        futures.add(pool.submit(new IntSupplier(100, 2)));
-
-        Thread.sleep(200);
-        futures.add(pool.submit(new IntSupplier(50, 3)));
-        Thread.sleep(60);
+        addIntSuppliers(pool, futures, 0, 3);
 
         int i = 0;
         for (LightFuture<Integer> future : futures) {
-            assertTrue(future.isReady());
-            assertEquals((int) future.get(), i);
-            ++i;
+            assertEquals((int) future.get(), i++);
+        }
+
+        futures.add(pool.submit(() -> 3));
+
+        i = 0;
+        for (LightFuture<Integer> future : futures) {
+            assertEquals((int) future.get(), i++);
         }
     }
 
     @Test
     public void testShutdown() throws InterruptedException, LightExecutionException {
-        ThreadPool pool = new ThreadPoolImpl(2);
+        ThreadPool pool = new ThreadPoolImpl(4);
         List<LightFuture<Integer>> futures = new ArrayList<>();
-        futures.add(pool.submit(new IntSupplier(100, 0)));
-        futures.add(pool.submit(new IntSupplier(100, 1)));
-        futures.add(pool.submit(new IntSupplier(100, 2)));
-        futures.add(pool.submit(new IntSupplier(100, 3)));
+        addIntSuppliers(pool, futures, 0, 4);
 
-        Thread.sleep(70);
-        pool.shutdown();
-        Thread.sleep(140);
-
-        assertEquals(pool.submit(new IntSupplier(100, 4)), null);
-
-        for (int i = 2; i < 4; ++i) {
-            assertFalse(futures.get(i).isReady());
-            assertEquals(futures.get(i).get(), null);
+        for (LightFuture<?> future : futures) {
+            future.get();
         }
+
+        pool.shutdown();
+        assertEquals(pool.submit(new IntSupplier(100, 4)), null);
     }
 
     @Test
-    public void testThreadsNumber() throws InterruptedException {
+    public void testThreadsNumber() throws InterruptedException, LightExecutionException {
         final int n = 5;
         ThreadPool pool = new ThreadPoolImpl(n);
         List<LightFuture<Integer>> futures = new ArrayList<>();
+
+        CyclicBarrier barrier = new CyclicBarrier(n);
         for (int i = 0; i < n; ++i) {
-            futures.add(pool.submit(new IntSupplier(100, i)));
+            int current = i;
+            futures.add(pool.submit(() -> {
+                try {
+                    barrier.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                }
+                return current;
+            }));
         }
 
-        Thread.sleep(105);
-
+        int i = 0;
         for (LightFuture<Integer> future : futures) {
-            assertTrue(future.isReady());
+            assertEquals((int) future.get(), i++);
         }
     }
 
@@ -145,8 +141,6 @@ public class ThreadPoolTest {
         nextFutures.add(nextFutures.get(0).thenApply(new SumSupplier(50, 2)));
 
         Thread.sleep(50);
-        assertFalse(nextFutures.get(0).isReady());
-        assertFalse(nextFutures.get(2).isReady());
 
         Thread.sleep(150);
         nextFutures.add(futures.get(2).thenApply(new SumSupplier(10, 11)));
@@ -154,16 +148,39 @@ public class ThreadPoolTest {
 
         int i = 0;
         for (LightFuture<Integer> future : futures) {
-            assertTrue(future.isReady());
             assertEquals((int) future.get(), i);
             ++i;
         }
 
         i = 10;
         for (LightFuture<Integer> nextFuture : nextFutures) {
-            assertTrue(nextFuture.isReady());
             assertEquals((int) nextFuture.get(), i);
             ++i;
+        }
+    }
+
+    @Test(expected = LightExecutionException.class)
+    public void testException() throws LightExecutionException, InterruptedException {
+        ThreadPool pool = new ThreadPoolImpl(10);
+        List<LightFuture<Integer>> futures = new ArrayList<>();
+        final int n = 5;
+        addIntSuppliers(pool, futures, 0, n);
+
+        futures.add(pool.submit(() -> {
+            throw new Error();
+        }));
+
+        for (int i = 0; i < n; ++i) {
+            assertEquals((int) futures.get(i).get(), i);
+        }
+        futures.get(n).get();
+    }
+
+    private static void addIntSuppliers(ThreadPool pool,
+                                 List<LightFuture<Integer>> futures, int begin, int end) {
+        for (int i = begin; i < end; ++i) {
+            int current = i;
+            futures.add(pool.submit(() -> current));
         }
     }
 

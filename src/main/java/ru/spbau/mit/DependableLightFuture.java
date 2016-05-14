@@ -8,7 +8,7 @@ class DependableLightFuture<R, U> extends AbstractLightFuture<U> {
     private R previousTaskResult;
 
     DependableLightFuture(ThreadPoolImpl pool, Function<? super R, ? extends U> f) {
-        setPool(pool);
+        super(pool);
         this.f = f;
     }
 
